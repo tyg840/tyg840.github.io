@@ -21,7 +21,7 @@
     ]);
   </script>
   <style>
-    .polar-doc{max-width:950px}.polar-doc .article-section{margin:28px 0}.polar-doc .article-section h2{margin-bottom:12px}.polar-doc p{line-height:1.8}.polar-doc .math-table-wrap{overflow-x:auto;margin:22px 0}.polar-doc table{border-collapse:collapse;min-width:700px;width:100%;font-size:14px}.polar-doc th,.polar-doc td{padding:9px 11px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}.polar-doc th{font-weight:600;border-bottom:2px solid #aebbb1}.polar-doc figure{margin:26px 0}.polar-doc figure canvas{display:block;width:100%;height:auto;background:#fff}.polar-doc figcaption{font-size:12px;color:var(--muted);margin-top:8px}.polar-doc mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden}
+    .polar-doc{max-width:950px}.polar-doc .article-section{margin:28px 0}.polar-doc .article-section h2{margin-bottom:12px}.polar-doc p{line-height:1.8}.polar-doc .math-table-wrap{overflow-x:auto;margin:22px 0}.polar-doc table{border-collapse:collapse;min-width:700px;width:100%;font-size:14px}.polar-doc th,.polar-doc td{padding:9px 11px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}.polar-doc th{font-weight:600;border-bottom:2px solid #aebbb1}.polar-doc figure{margin:26px 0}.polar-doc figure img{display:block;width:100%;height:auto}.polar-doc figcaption{font-size:12px;color:var(--muted);margin-top:8px}.polar-doc mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden}
   </style>
 </head>
 <body>
@@ -102,45 +102,10 @@
         </tbody>
       </table></div>
       <p>By symmetry about the \(x\)-axis, each point with \(y\neq0\) has a mirror image \((x,-y)\) at angle \(2\pi-\theta\). For example, \(\theta=\frac{4\pi}{3}\) gives \((1,\sqrt3)\).</p>
-      <figure><canvas id="curve-figure" width="1280" height="850" role="img" aria-label="Graph of the polar curve with an overview and a zoom on the loop and pole. Red dotted lines mark horizontal tangents, green dotted lines vertical tangents, and gray dashed lines tangents at the pole."></canvas><figcaption>\(r=\frac{\sin^2\theta+\cos\theta}{\cos^3\theta}\). Red dotted: horizontal tangents; green dotted: vertical tangents; gray dashed: tangents at the pole.</figcaption></figure>
+      <figure><img src="image2.png" alt="Graph of the polar curve, showing an overview and a zoom on the loop and pole, with horizontal and vertical tangents." /><figcaption>\(r=\frac{\sin^2\theta+\cos\theta}{\cos^3\theta}\). Red dotted: horizontal tangents; green dotted: vertical tangents; gray dashed: tangents at the pole.</figcaption></figure>
     </section>
     <a class="next-link" href="topic-three.html">Next: Coming soon <span>→</span></a>
   </main>
   <footer><a href="index.html">Math in Motion</a><span>02 / 03</span></footer>
-  <script>
-    (() => {
-      const canvas = document.getElementById('curve-figure');
-      const ctx = canvas.getContext('2d');
-      const rad = Math.PI;
-      const curve = t => {
-        const c = Math.cos(t), s = Math.sin(t);
-        if (Math.abs(c) < .012) return null;
-        const x = (s*s+c)/(c*c), y = x*s/c;
-        return Number.isFinite(x+y) ? [x,y] : null;
-      };
-      function panel(box, bounds, title, ticksX, ticksY) {
-        const [x0,y0,w,h]=box, [xmin,xmax,ymin,ymax]=bounds;
-        const X=x=>x0+(x-xmin)/(xmax-xmin)*w, Y=y=>y0+h-(y-ymin)/(ymax-ymin)*h;
-        ctx.fillStyle='#fff';ctx.fillRect(x0,y0,w,h);ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.font='14px Arial';ctx.fillStyle='#111';ctx.textAlign='center';ctx.fillText(title,x0+w/2,y0-15);
-        ctx.strokeStyle='#ddd';ctx.fillStyle='#333';ctx.lineWidth=1;
-        ticksX.forEach(t=>{ctx.beginPath();ctx.moveTo(X(t),y0);ctx.lineTo(X(t),y0+h);ctx.stroke();ctx.fillText(t,X(t),y0+h+21)});
-        ticksY.forEach(t=>{ctx.beginPath();ctx.moveTo(x0,Y(t));ctx.lineTo(x0+w,Y(t));ctx.stroke();ctx.textAlign='right';ctx.fillText(t,x0-7,Y(t)+4);ctx.textAlign='center'});
-        ctx.strokeStyle='#777';ctx.beginPath();ctx.moveTo(X(Math.max(xmin,Math.min(0,xmax))),y0);ctx.lineTo(X(Math.max(xmin,Math.min(0,xmax))),y0+h);ctx.moveTo(x0,Y(Math.max(ymin,Math.min(0,ymax))));ctx.lineTo(x0+w,Y(Math.max(ymin,Math.min(0,ymax))));ctx.stroke();
-        ctx.save();ctx.beginPath();ctx.rect(x0,y0,w,h);ctx.clip();ctx.strokeStyle='blue';ctx.lineWidth=3;ctx.beginPath();let drawing=false;
-        const n=8000;for(let i=0;i<=n;i++){const t=2*Math.PI*i/n,p=curve(t);if(!p||p[0]<xmin-.3||p[0]>xmax+.3||p[1]<ymin-.3||p[1]>ymax+.3){drawing=false;continue}const px=X(p[0]),py=Y(p[1]);if(!drawing){ctx.moveTo(px,py);drawing=true}else ctx.lineTo(px,py)}ctx.stroke();
-        function dot(x,y,color='#111'){if(x<xmin||x>xmax||y<ymin||y>ymax)return;ctx.fillStyle=color;ctx.beginPath();ctx.arc(X(x),Y(y),4.5,0,2*Math.PI);ctx.fill()}
-        function line(x1,y1,x2,y2,color,dash=[]){ctx.strokeStyle=color;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(X(x1),Y(y1));ctx.lineTo(X(x2),Y(y2));ctx.stroke();ctx.setLineDash([])}
-        const horiz=[2.495,3.788].map(t=>curve(t)).filter(Boolean);horiz.forEach(([x,y])=>{dot(x,y,'red');line(xmin,y,xmax,y,'red',[3,5])});
-        [[1,0],[-1,0]].forEach(([x,y])=>{dot(x,y,'green');line(x,ymin,x,ymax,'green',[3,5])});
-        const p1=2.237,m1=-1.272,p2=4.046,m2=1.272;[[p1,m1],[p2,m2]].forEach(([t,m])=>{const p=curve(t);if(!p)return;line(Math.max(xmin,p[0]-1.2),p[1]-m*1.2,Math.min(xmax,p[0]+1.2),p[1]+m*1.2,'#888',[5,4])});
-        [[0,0,'(1, 0)'],[Math.PI,0,'(-1, 0)'],[Math.PI/3,8.66,'(5, 8.660)'],[Math.PI/4,2.414,'(2.414, 2.414)']].forEach(([t,yy,label])=>{const p=curve(t);if(!p)return;dot(p[0],yy);if(p[0]>xmin&&p[0]<xmax&&yy>ymin&&yy<ymax){ctx.fillStyle='#111';ctx.textAlign='left';ctx.fillText(label,X(p[0])+8,Y(yy)-7)}});
-        ctx.restore();ctx.strokeStyle='#333';ctx.strokeRect(x0,y0,w,h);ctx.fillStyle='#111';ctx.textAlign='center';ctx.fillText('x',x0+w/2,y0+h+42);ctx.save();ctx.translate(x0-44,y0+h/2);ctx.rotate(-Math.PI/2);ctx.fillText('y',0,0);ctx.restore();
-      }
-      ctx.fillStyle='#fff';ctx.fillRect(0,0,1280,850);ctx.fillStyle='#111';ctx.font='20px Arial';ctx.textAlign='left';ctx.fillText('r = (sin² θ + cos θ) / cos³ θ',85,35);ctx.font='16px Arial';ctx.fillText('red dotted: horizontal tangents,   green dotted: vertical tangents,   gray dashed: tangents at the pole',340,35);
-      panel([90,110,345,690],[-2,7,-10,10],'Overview',[-2,0,2,4,6],[-10,-7.5,-5,-2.5,0,2.5,5,7.5,10]);
-      panel([625,275,665,435],[-3.4,4,-2.4,2.4],'Zoom on the loop and the pole',[-3,-2,-1,0,1,2,3,4],[-2,-1,0,1,2]);
-      ctx.fillStyle='#111';ctx.font='14px Arial';ctx.textAlign='center';ctx.fillText('pole (0, 0, θ ≈ 2.237) and (0, 0, θ ≈ 4.046); slopes ∓1.272',955,258);
-    })();
-  </script>
 </body>
 </html>
